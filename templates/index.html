@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Epilepsy Seizure Detection and Notification System</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        h1 {
+            color: #343a40;
+            margin-bottom: 20px;
+        }
+        form {
+            margin-bottom: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        input[type="file"] {
+            margin-bottom: 10px;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        #result {
+            margin-top: 20px;
+            padding: 20px;
+            background-color: #ffffff;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            width: 300px;
+            text-align: center;
+        }
+        #result p {
+            margin: 10px 0;
+            font-size: 16px;
+        }
+        .alert {
+            color: red;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Epilepsy Seizure Detection and Notification System</h1>
+    <form id="upload-form" enctype="multipart/form-data">
+        <input type="file" id="file-input" name="file" accept=".csv, .txt">
+        <button type="submit">Upload</button>
+    </form>
+    <div id="result"></div>
+
+    <script>
+        document.getElementById('upload-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            var formData = new FormData();
+            var fileInput = document.getElementById('file-input').files[0];
+            formData.append('file', fileInput);
+
+            fetch('/classify_emg', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                var resultDiv = document.getElementById('result');
+                resultDiv.innerHTML = `
+                    <p>Class Name: ${data['Class Name']}</p>
+                    <p>Probability of Seizure: ${data['Probability of Seizure']}%</p>
+                    <p>Probability of No Seizure: ${data['Probability of No Seizure']}%</p>
+                `;
+
+                if (data['Class Name'] === 'Seizure') {
+                    var alertDiv = document.createElement('div');
+                    alertDiv.className = 'alert';
+                    alertDiv.innerText = 'ALERT: Seizure detected! Please notify people around.';
+                    resultDiv.appendChild(alertDiv);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                var resultDiv = document.getElementById('result');
+                resultDiv.innerHTML = '<p style="color: red;">An error occurred while processing the file.</p>';
+            });
+        });
+    </script>
+</body>
+</html>
