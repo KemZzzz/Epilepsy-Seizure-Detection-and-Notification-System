@@ -1,5 +1,7 @@
 # Epilepsy Seizure Detection and Notification System
 
+![5899983909112889982](https://github.com/user-attachments/assets/4b145c11-2c27-4e2d-90e7-fc4473e07c52)
+
 ## Overview
 The Epilepsy Seizure Detection and Notification System is designed to detect convulsive seizures in patients using EMG sensors connected to an ESP32 device. The system notifies the patient's relatives and caregivers with the patient's current location and a history of seizures. The project integrates various technologies to ensure timely detection and notification, providing a comprehensive solution for managing epilepsy.
 
